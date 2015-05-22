@@ -50,7 +50,7 @@ Sample Mean versus Theoretical Mean: Include figures with titles. In the figures
 
 ![](Project1_files/figure-html/sampleVtheoryMean-1.png) 
 
-## Sample Vaiance s. Theoretical Variance
+## Sample Vaiance vs. Theoretical Variance
 ![](Project1_files/figure-html/sampleVtheoryVary-1.png) 
 
 ## Distribution
