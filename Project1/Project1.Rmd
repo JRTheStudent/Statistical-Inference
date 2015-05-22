@@ -7,36 +7,28 @@ output:
 
 ## Exponential Distribution Vs. the Central Limit Theorem
 
-## Overview
+### Overview
+
 This project explores the contrast between the observed and estimated means and variances of a large collection of randomly simulated exponential variables. This is achieved by comparing mean and variance values estimated by the Central Limit Theorem (CLT) to those observed through random simulation.
 
-## Simulations
+### Simulations
 
-#### Load Required Libraries
-```{r "libraries", message = F, warning = F}
+```{r "simulation", message = F, warning = F}
 library(grid)       # Plotting graphics (arrow)
 library(ggplot2)    # Plotting (ggplot etc.)
-```
-
-
-#### Set Variables and Simulate Data
-```{r "simulation"}
 set.seed(123)
 n <- 40
 lambda <- 0.2
 nSim <- 1000
-
 exps <- NULL
 means <- NULL
 vars <- NULL
-
 for (i in 1:nSim){
     exp <- rexp(n, lambda)
     exps <- cbind(exps, exp)
     means <- c(means, mean(exp))
     vars <- c(vars, sd(exp) ^ 2)
 }
-
 tMean <- 1 / lambda
 tSD <- 1 / lambda
 tSE <- tSD / sqrt(n)
@@ -47,8 +39,9 @@ The data were produced via 1,000 simulations (*nSim*) each generating 40 observa
 
 Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaion (*tSD*) are $(1/\lambda) = (1/0.2) = 5.0$.  Theoreteical standard error of the mean (*tSE*) is the standard deviation divided by the square root of the sample size = $\sigma / \sqrt{n} = 5.0 / \sqrt{1000} = .158$. Theoretical variance (*tVar*) is the square of the theoretical standard deviation $(5.0^2 = 25)$.  
 
-## Sample Mean Vs. Theoretical Mean
-```{r "sampleVtheoryMean", echo = F}
+### Sample Mean Vs. Theoretical Mean
+
+```{r "sampleVtheoryMean", echo = F, fig.height = 3}
 plot1 <- ggplot(
     as.data.frame(means)
     ,aes(x = means)
@@ -90,15 +83,15 @@ plot1 <- ggplot(
     aes(
         x = tSD + 1
         ,xend = tSD
-        ,y = max(density(means)$y) * .85
-        ,yend = max(density(means)$y) * .85 
+        ,y = max(density(means)$y) * .75
+        ,yend = max(density(means)$y) * .75 
     )
     ,arrow = arrow(length = unit(.1,"in"), ends = "last")
     ,color = "red"
 ) + geom_text( # Theoretical distribution mean label
     aes(
         x = tSD + 1
-        ,y = max(density(means)$y) * .85
+        ,y = max(density(means)$y) * .75
         ,label = paste(
             "Theoretical distribution\nwith mean of"
             ,sprintf("%.5f",tMean)
@@ -115,11 +108,11 @@ plot1 <- ggplot(
 print(plot1)
 ```
 
-The base plot in this figure is comprised of a histogram of the sample means with overlayed data including the actual sample mean as well as the theoretical distribution and mean.  This figure demonstrates that the sample mean (5.01191) is already  closely approximated by the theoretical mean (5.0) with a sample size of 1,000 simulations as described above.   
+The base plot in this figure is comprised of a histogram of the sample means with overlayed data including the actual sample mean as well as the theoretical distribution and mean.  This figure demonstrates that the sample mean (5.01191) is already  closely approximated by the theoretical mean (5.0) as described above with a sample size of 1,000 simulations.   
 
+### Sample Vaiance vs. Theoretical Variance
 
-## Sample Vaiance vs. Theoretical Variance
-```{r "sampleVtheoryVary", echo = F}
+```{r "sampleVtheoryVary", echo = F, fig.height = 3}
 plot2 <- ggplot(
     as.data.frame(vars)
     ,aes(x = vars)
@@ -134,14 +127,14 @@ plot2 <- ggplot(
     aes(
         x = mean(vars) + 10
         ,xend = mean(vars)
-        ,y = max(density(vars)$y)
+        ,y = max(density(vars)$y) * .85
         ,yend = max(density(vars)$y) 
     )
     ,arrow = arrow(length = unit(.1,"in"), ends = "last")
 ) + geom_text( # Sample distribution variability label
     aes(
         x = mean(vars) + 10
-        ,y = max(density(vars)$y)
+        ,y = max(density(vars)$y) * .85
         ,label = paste(
             "Sample distribution\nwith variability mean of"
             ,sprintf("%.5f", mean(vars))
@@ -150,10 +143,6 @@ plot2 <- ggplot(
     ,color = "black"
     ,size = 4
     ,hjust = 0    
-#  ) + stat_function(
-#      fun = dnorm
-#      ,arg = list(mean = tVar)
-     ,color = "red"
 ) + geom_vline( # Theoretical distribution variability line
     xintercept = tVar
     ,color = "red"
@@ -161,15 +150,15 @@ plot2 <- ggplot(
     aes(
         x = tVar + 10
         ,xend = tVar
-        ,y = max(density(vars)$y) * .85
-        ,yend = max(density(vars)$y) * .85
+        ,y = max(density(vars)$y) * .55
+        ,yend = max(density(vars)$y) * .7
     )
     ,arrow = arrow(length = unit(.1,"in"), ends = "last")
     ,color = "red"
 ) + geom_text( # Theoretical distribution variability label
     aes(
         x = tVar + 10
-        ,y = max(density(vars)$y) * .85
+        ,y = max(density(vars)$y) * .55
         ,label = paste(
             "Theoretical distribution\nwith variability mean of"
             ,sprintf("%.5f",tVar)
@@ -179,20 +168,18 @@ plot2 <- ggplot(
     ,size = 4
     ,hjust = 0    
 ) + labs(
-    title = "Density of Exponential Sample\nvs. Theoretical Variability"
+    title = "Histogram of Exponential Sample\nvs. Theoretical Variability"
     ,x = "Sample Variability"
     ,y = "Density"
 )
 print(plot2)
 ```
 
-## Distribution
-Show that the distribution is approximately normal.
-Focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials. 
+The base plot in this figure is comprised of a histogram of the variance of the sample with overlayed data including the actual sample variance mean and the theoretical variance mean.  This figure demonstrates that the sample variance (24.84317) is already  reasonably approximated by the theoretical variance (25.0) as described above with a sample size of 1,000 simulations.   
 
-Via figures and text, explain how one can tell the distribution is approximately normal.
+### Distribution
 
-```{r "distribution", echo = F}
+```{r "distribution", echo = F, fig.height = 3}
 plot3 <- qplot(
     means
     ,geom = "density"
@@ -205,14 +192,14 @@ plot3 <- qplot(
     aes(
         x = mean(means) + 1
         ,xend = mean(means)
-        ,y = max(density(means)$y)
+        ,y = max(density(means)$y) * .85
         ,yend = max(density(means)$y) 
     )
     ,arrow = arrow(length = unit(.1,"in"), ends = "last")
 ) + geom_text( # Sample distribution mean label
     aes(
         x = mean(means) + 1
-        ,y = max(density(means)$y)
+        ,y = max(density(means)$y) * .85
         ,label = paste(
             "Sample distribution\nwith mean of"
             ,sprintf("%.5f", mean(means))
@@ -232,7 +219,7 @@ plot3 <- qplot(
     aes(
         x = tMean + 1
         ,xend = tMean
-        ,y = .4
+        ,y = .3
         ,yend = .4 
     )
     ,arrow = arrow(length = unit(.1,"in"), ends = "last")
@@ -240,7 +227,7 @@ plot3 <- qplot(
 ) + geom_text( # Theoretical distribution mean label
     aes(
         x = tMean + 1
-        ,y = .4
+        ,y = .3
         ,label = paste(
             "Theoretical distribution\nwith mean of"
             ,sprintf("%.5f",tMean)
@@ -253,6 +240,10 @@ plot3 <- qplot(
 print(plot3)
 ```
 
+Show that the distribution is approximately normal.
+Focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials. 
+
+Via figures and text, explain how one can tell the distribution is approximately normal.
 
 The CLT states that averages are approximately normal, with distributions
 centered at the population mean and 
