@@ -49,6 +49,6 @@ The base plot in this figure is comprised of a histogram of the variance of the 
 
 ![](Project1_files/figure-html/distribution-1.png) 
 
-The base plot in this figure is comprised of the density of the means of the random exponential variables as describeda bove.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
+The base plot in this figure is comprised of the density of the means of the random exponential variables as described above.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
 $(1/\lambda) = (1/0.2) = 5.0$.
 This demonstrates that the distribution of a large set of means of exponentials is approximately normal.  As the sample size increases the distribution converges to the distribution of a large set of random normals.
