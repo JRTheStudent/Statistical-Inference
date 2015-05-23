@@ -31,13 +31,12 @@ for (i in 1:nSim){
 }
 tMean <- 1 / lambda
 tSD <- 1 / lambda
-tSE <- tSD / sqrt(n)
 tVar <- tSD ^ 2
 ```
 
 The data were produced via 1,000 simulations (*nSim*) each generating 40 observations (*n*) of random exponentials using a rate of 0.2 (*lambda*). These values are applied via iteration of a loop to populate values of the expnonentials (*exps*), means (*means*) and variabilities (*vars*). 
 
-Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaion (*tSD*) are $(1/\lambda) = (1/0.2) = 5.0$.  Theoreteical standard error of the mean (*tSE*) is the standard deviation divided by the square root of the sample size = $\sigma / \sqrt{n} = 5.0 / \sqrt{1000} = .158$. Theoretical variance (*tVar*) is the square of the theoretical standard deviation $(5.0^2 = 25)$.  
+Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaion (*tSD*) are $(1/\lambda) = (1/0.2) = 5.0$.   Theoretical variance (*tVar*) is the square of the theoretical standard deviation $(5.0^2 = 25)$.  
 
 ### Sample Mean Vs. Theoretical Mean
 
@@ -202,7 +201,7 @@ plot3 <- qplot(
         ,y = max(density(means)$y) * .85
         ,label = paste(
             "Sample distribution of the means of\n1,000 sets"
-            ,"of 40 random exponentials\nwith mean"
+            ,"of 40 random exponentials\nwith mean of"
             ,sprintf("%.5f",mean(means))
         )
     )
@@ -240,14 +239,6 @@ plot3 <- qplot(
 print(plot3)
 ```
 
-Show that the distribution is approximately normal.
-Focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials. 
-
-Via figures and text, explain how one can tell the distribution is approximately normal.
-
-The CLT states that averages are approximately normal, with distributions
-centered at the population mean and 
-with standard deviation equal to the standard error of the mean
-
-Standard Error of the mean = 
-SEm = sigma / sqrt(N)
+The base plot in this figure is comprised of the density of the means of the random exponential variables as describeda bove.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
+$(1/\lambda) = (1/0.2) = 5.0$
+This demonstrates that the distribution of a large set of means of exponentials is approximately normal.  As the sample size increases the distribution converges to the distribution of a large set of random normals.
