@@ -1,8 +1,8 @@
 ---
 output:
-  pdf_document: default
   html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
 ## Exponential Distribution Vs. the Central Limit Theorem
