@@ -98,7 +98,7 @@ plot1 <- ggplot(
         )
     )
     ,color = "red"
-    ,size = 4
+    ,size = 3
     ,hjust = 0    
 ) + labs(
     title = "Histogram of Exponential Sample\nvs. Theoretical Means"
@@ -141,7 +141,7 @@ plot2 <- ggplot(
         )
     )
     ,color = "black"
-    ,size = 4
+    ,size = 3
     ,hjust = 0    
 ) + geom_vline( # Theoretical distribution variability line
     xintercept = tVar
@@ -165,7 +165,7 @@ plot2 <- ggplot(
         )
     )
     ,color = "red"
-    ,size = 4
+    ,size = 3
     ,hjust = 0    
 ) + labs(
     title = "Histogram of Exponential Sample\nvs. Theoretical Variability"
@@ -203,11 +203,11 @@ plot3 <- qplot(
         ,label = paste(
             "Sample distribution of the means of\n1,000 sets"
             ,"of 40 random exponentials\nwith mean"
-            ,mean(means)
+            ,sprintf("%.5f",mean(means))
         )
     )
     ,color = "black"
-    ,size = 4
+    ,size = 3
     ,hjust = 0
 ) + geom_density( # Distribution of random normals
     aes(
@@ -234,7 +234,7 @@ plot3 <- qplot(
         )
     )
     ,color = "red"
-    ,size = 4
+    ,size = 3
     ,hjust = 0
 )
 print(plot3)
