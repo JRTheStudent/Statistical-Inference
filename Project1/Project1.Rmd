@@ -183,7 +183,7 @@ The base plot in this figure is comprised of a histogram of the variance of the 
 plot3 <- qplot(
     means
     ,geom = "density"
-    ,main = "Density of Means for Exponential Variables:\nSample vs. Theoretical Values"
+    ,main = "Density of Means for Exponential Variables vs. Density of Random Normals"
     ,xlab = "Sample Mean"
     ,ylab = "Density"
 ) + geom_vline( # Sample distribution mean line
@@ -201,21 +201,20 @@ plot3 <- qplot(
         x = mean(means) + 1
         ,y = max(density(means)$y) * .85
         ,label = paste(
-            "Sample distribution\nwith mean of"
-            ,sprintf("%.5f", mean(means))
+            "Sample distribution of the means of\n1,000 sets"
+            ,"of 40 random exponentials\nwith mean"
+            ,mean(means)
         )
     )
     ,color = "black"
     ,size = 4
     ,hjust = 0
-) + stat_function( # Theoretical (normal) distribution
-    fun = dnorm
-    ,color = "red"
-    ,arg = list(mean = tMean)
-) + geom_vline( # Theoretical distribution mean line
-    xintercept = tMean
-    ,color = "red"
-) + geom_segment( # Theoretical distribution mean arrow
+) + geom_density( # Distribution of random normals
+    aes(
+        x = rnorm(1000000, mean = tMean)
+    )
+    , color = "red"
+) + geom_segment( # Distribution of random normals arrow
     aes(
         x = tMean + 1
         ,xend = tMean
@@ -229,7 +228,8 @@ plot3 <- qplot(
         x = tMean + 1
         ,y = .3
         ,label = paste(
-            "Theoretical distribution\nwith mean of"
+            "Distribution of 1 million random normals \n"
+            ,"with CDT theoretical mean of"
             ,sprintf("%.5f",tMean)
         )
     )
