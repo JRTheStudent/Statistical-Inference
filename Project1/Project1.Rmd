@@ -70,7 +70,7 @@ plot1 <- ggplot(
         )
     )
     ,color = "black"
-    ,size = 4
+    ,size = 3
     ,hjust = 0    
 ) + stat_function(
     fun = dnorm
