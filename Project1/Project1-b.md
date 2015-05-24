@@ -117,9 +117,9 @@ kable(tgBySuppDose
 
 To summarize the data we create a data frame grouped by *Suppliment* and *Dose*.
 Derived summary data for each group include the mean length (*Length*) and the
-95% confidence interval (*CI*). The confidence interval is derived by
-multiplying the standard deviation ($\sigma$) by two and dividing by the square
-root of the number of observations (*n*), i.e.: $2\sigma / \sqrt{n}$.
+95% confidence interval (*CI*). Per the CLT, the confidence interval is derived
+by multiplying the standard deviation ($\sigma$) by two and dividing by the
+square root of the number of observations (*n*), i.e.: $2\sigma / \sqrt{n}$.
 
 ### Confidence Intervals and Hypothesis Test
 
