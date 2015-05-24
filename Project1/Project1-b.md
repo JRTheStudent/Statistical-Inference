@@ -82,8 +82,8 @@ table(ToothGrowth %>% select(supp, dose))
 ```
 
 The exploratory analysis of the *ToothGrowth* data frame demonstrates that the
-data consist of 30 observations each of *supp* *OJ* (Orange Juice) and *VC* 
-(Ascorbic Acid); the 30 observations of each *supp* consist of 10 observations
+data consist of 30 observations each of *supp* *OJ* (orange juice) and *VC* 
+(ascorbic acid); the 30 observations of each *supp* consist of 10 observations
 each of the three *dose* levels (0.5, 1 and 2).
 
 ### Data Summary
