@@ -127,7 +127,7 @@ square root of the number of observations (*n*), i.e.: $2\sigma / \sqrt{n}$.
 
 Based on a visualization of the summarized data we find that in general
 increasing the dosage of Vitamin C leads to an increase in the mean of tooth
-length via both delivery methods (orange juice and ascorbic acid). While the   
+length via both delivery methods (orange juice and ascorbic acid). While the
 highest supplied dosage (2.0 mg) of each method produce similar means (26.06 and
 26.14, respectively), the 95% confidence interval for orange juice is ~ 44%
 smaller than that of ascorbic acid ($\pm$ ~1.68 vs. 3.03, respectively) whereas
