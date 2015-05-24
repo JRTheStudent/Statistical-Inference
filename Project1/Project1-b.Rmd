@@ -68,7 +68,7 @@ root of the number of observations (*n*), i.e.: $2\sigma / \sqrt{n}$.
 
 ### Confidence Intervals and Hypothesis Test
 
-```{r "ciAndTest"}
+```{r "ciAndTest", echo = F}
 pd <- position_dodge(0.05)
 plot1 <- ggplot(
     tgBySuppDose
@@ -110,12 +110,12 @@ plot1 <- ggplot(
     ,y = 15
     ,label = 
         paste(
-            "The overall growth in mean tooth length using orange juice is"
+            "The overall growth in mean tooth\nlength using orange juice is"
             ,diff(range((tgBySuppDose %>% filter(Suppliment == "OJ"))$Length))
-            ,"\nThe overall growth in mean tooth length using ascorbic acid is"
+            ,"\n\nThe overall growth in mean tooth\nlength using ascorbic acid is"
             ,diff(range((tgBySuppDose %>% filter(Suppliment == "VC"))$Length))
         )
-    ,size = 5
+    ,size = 3
     ,hjust = 0
 )
 print(plot1)

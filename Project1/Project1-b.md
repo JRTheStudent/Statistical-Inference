@@ -123,60 +123,6 @@ root of the number of observations (*n*), i.e.: $2\sigma / \sqrt{n}$.
 
 ### Confidence Intervals and Hypothesis Test
 
-
-```r
-pd <- position_dodge(0.05)
-plot1 <- ggplot(
-    tgBySuppDose
-    ,aes(
-        x = Dose
-        ,y = Length
-        ,ymax = max(Length)
-        ,color = Suppliment
-    )
-
-) + geom_errorbar(
-    aes(
-        ymin = Length - CI
-        ,ymax = Length + CI
-
-    )
-    ,width = .1
-    ,position = pd
-) + geom_line(
-    position = pd
-) + geom_point(
-    position = pd
-    , size = 5
-    , shape=21
-    , fill = "white"
-) + labs(
-    title = "Analysis of ToothGrowth Data by Suppliment and Dose"
-    ,x = "Dose (mg)"
-    ,y = "Tooth Length"
-) + scale_colour_hue(
-    breaks=c("OJ", "VC")
-    ,labels=c("Orange juice", "Ascorbic acid")
-) + theme(
-    legend.justification=c(1,0)
-    ,legend.position=c(1,0)
-) + annotate(
-    "text"
-    ,x = 1.25
-    ,y = 15
-    ,label = 
-        paste(
-            "The overall growth in mean tooth length using orange juice is"
-            ,diff(range((tgBySuppDose %>% filter(Suppliment == "OJ"))$Length))
-            ,"\nThe overall growth in mean tooth length using ascorbic acid is"
-            ,diff(range((tgBySuppDose %>% filter(Suppliment == "VC"))$Length))
-        )
-    ,size = 5
-    ,hjust = 0
-)
-print(plot1)
-```
-
 ![](Project1-b_files/figure-html/ciAndTest-1.png) 
 
 Based on a visualization of the summarized data we find that in general
