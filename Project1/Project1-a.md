@@ -1,179 +1,54 @@
 
-## Title Analysis of the ToothGrowth Data from R Datasets Package
+## Exponential Distribution Vs. the Central Limit Theorem
 
 ### Overview
 
-This project explores the *ToothGrowth* data from the R *datasets* library by
-performing some preliminary analysis on the data and drawing some initial
-conclusions.
+This project explores the contrast between the observed and estimated means and variances of a large collection of randomly simulated exponential variables. This is achieved by comparing mean and variance values estimated by the Central Limit Theorem (CLT) to those observed through random simulation.
 
-
-### Exploratory Data Analysis
+### Simulations
 
 
 ```r
-library(dplyr)      # Data manipulation (filter, mutate, group_by, etc.)
-library(ggplot2)    # Plotting (qplot, ggplot etc.)
-library(knitr)      # Dynamic Report Creation
-library(datasets)   # R included sample data sets
-data(ToothGrowth)
+library(grid)       # Plotting graphics (arrow)
+library(ggplot2)    # Plotting (ggplot etc.)
+set.seed(123)
+n <- 40
+lambda <- 0.2
+nSim <- 1000
+exps <- NULL
+means <- NULL
+vars <- NULL
+for (i in 1:nSim){
+    exp <- rexp(n, lambda)
+    exps <- cbind(exps, exp)
+    means <- c(means, mean(exp))
+    vars <- c(vars, sd(exp) ^ 2)
+}
+tMean <- 1 / lambda
+tSD <- 1 / lambda
+tVar <- tSD ^ 2
 ```
 
-To setup the analysis we load the required libraries and the *ToothGrowth* data
-set.  Per the R documentation for the *datasets* package, *ToothGrowth* is described
-as follows:
+The data were produced via 1,000 simulations (*nSim*) each generating 40 observations (*n*) of random exponentials using a rate of 0.2 (*lambda*). These values are applied via iteration of a loop to populate values of the expnonentials (*exps*), means (*means*) and variabilities (*vars*). 
 
-> The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).
+Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaion (*tSD*) are $(1/\lambda) = (1/0.2) = 5.0$.   Theoretical variance (*tVar*) is the square of the theoretical standard deviation $(5.0^2 = 25)$.  
 
+### Sample Mean Vs. Theoretical Mean
 
-```r
-str(ToothGrowth)
-```
+![](Project1_files/figure-html/sampleVtheoryMean-1.png) 
 
-```
-## 'data.frame':	60 obs. of  3 variables:
-##  $ len : num  4.2 11.5 7.3 5.8 6.4 10 11.2 11.2 5.2 7 ...
-##  $ supp: Factor w/ 2 levels "OJ","VC": 2 2 2 2 2 2 2 2 2 2 ...
-##  $ dose: num  0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 ...
-```
+The base plot in this figure is comprised of a histogram of the sample means with overlayed data including the actual sample mean as well as the theoretical distribution and mean.  This figure demonstrates that the sample mean (5.01191) is already  closely approximated by the theoretical mean (5.0) as described above with a sample size of 1,000 simulations.   
 
-```r
-summary(ToothGrowth)
-```
+### Sample Vaiance vs. Theoretical Variance
 
-```
-##       len        supp         dose      
-##  Min.   : 4.20   OJ:30   Min.   :0.500  
-##  1st Qu.:13.07   VC:30   1st Qu.:0.500  
-##  Median :19.25           Median :1.000  
-##  Mean   :18.81           Mean   :1.167  
-##  3rd Qu.:25.27           3rd Qu.:2.000  
-##  Max.   :33.90           Max.   :2.000
-```
+![](Project1_files/figure-html/sampleVtheoryVary-1.png) 
 
-```r
-table(ToothGrowth$supp)
-```
+The base plot in this figure is comprised of a histogram of the variance of the sample with overlayed data including the actual sample variance mean and the theoretical variance mean.  This figure demonstrates that the sample variance (24.84317) is already  reasonably approximated by the theoretical variance (25.0) as described above with a sample size of 1,000 simulations.   
 
-```
-## 
-## OJ VC 
-## 30 30
-```
+### Distribution
 
-```r
-table(ToothGrowth$dose)
-```
+![](Project1_files/figure-html/distribution-1.png) 
 
-```
-## 
-## 0.5   1   2 
-##  20  20  20
-```
-
-```r
-table(ToothGrowth %>% select(supp, dose))
-```
-
-```
-##     dose
-## supp 0.5  1  2
-##   OJ  10 10 10
-##   VC  10 10 10
-```
-
-```r
-names(ToothGrowth) = c("Length", "Suppliment", "Dose")
-
-tgBySuppDose <- ToothGrowth %>%
-    group_by(Suppliment, Dose) %>%
-    summarize(Length = mean(Length)) %>%
-    arrange(Suppliment, Dose, desc(Length))
-
-kable(tgBySuppDose, format = "html")
-```
-
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> Suppliment </th>
-   <th style="text-align:right;"> Dose </th>
-   <th style="text-align:right;"> Length </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> OJ </td>
-   <td style="text-align:right;"> 0.5 </td>
-   <td style="text-align:right;"> 13.23 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> OJ </td>
-   <td style="text-align:right;"> 1.0 </td>
-   <td style="text-align:right;"> 22.70 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> OJ </td>
-   <td style="text-align:right;"> 2.0 </td>
-   <td style="text-align:right;"> 26.06 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> VC </td>
-   <td style="text-align:right;"> 0.5 </td>
-   <td style="text-align:right;"> 7.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> VC </td>
-   <td style="text-align:right;"> 1.0 </td>
-   <td style="text-align:right;"> 16.77 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> VC </td>
-   <td style="text-align:right;"> 2.0 </td>
-   <td style="text-align:right;"> 26.14 </td>
-  </tr>
-</tbody>
-</table>
-
-The exploratory analysis of the *ToothGrowth* data frame demonstrates that the
-data consist of 30 observations each of *supp* OJ (Orange Juice) and VC 
-(Ascorbic Acid); the 30 observations of each *supp* consist of 10 observations
-each of the three *dose* levels (0.5, 1 and 2).
-
-### Data Summary
-
-
-
-
-### Confidence Intervals and Hypothesis Test
-
-
-```r
-ToothGrowth$Dose = factor(ToothGrowth$Dose)
-ToothGrowth$Suppliment <- factor(
-    ToothGrowth$Suppliment
-    ,labels = c("Orange Juice", "Ascorbic Acid")
-)
-plot1 <- ggplot(
-    ToothGrowth
-    ,aes(
-        x = Dose
-        ,y = Length
-        ,fill = Dose
-    )
-) + geom_boxplot() +
-    facet_grid(.~Suppliment) +
-    labs(
-        title = "Analysis of ToothGrowth Data by Suppliment and Dose"
-        ,y = "Tooth Length"
-    )
-print(plot1)
-```
-
-![](Project1-a_files/figure-html/test-1.png) 
-
-### Conclusions
-
-### Reference
-
-[1] https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html
+The base plot in this figure is comprised of the density of the means of the random exponential variables as described above.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
+$(1/\lambda) = (1/0.2) = 5.0$.
+This demonstrates that the distribution of a large set of means of exponentials is approximately normal.  As the sample size increases the distribution converges to the distribution of a large set of random normals.

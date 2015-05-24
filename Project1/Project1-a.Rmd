@@ -1,126 +1,244 @@
 ---
 output:
-  pdf_document: default
   html_document:
     keep_md: yes
+  pdf_document: default
 ---
 
-## Title Analysis of the ToothGrowth Data from R Datasets Package
+## Exponential Distribution Vs. the Central Limit Theorem
 
 ### Overview
 
-This project explores the *ToothGrowth* data from the R *datasets* library by
-performing some preliminary analysis on the data and drawing some initial
-conclusions.
+This project explores the contrast between the observed and estimated means and variances of a large collection of randomly simulated exponential variables. This is achieved by comparing mean and variance values estimated by the Central Limit Theorem (CLT) to those observed through random simulation.
 
+### Simulations
 
-### Exploratory Data Analysis
-
-```{r "setup", message = F, warning = F}
-library(dplyr)      # Data manipulation (filter, mutate, group_by, etc.)
-library(ggplot2)    # Plotting (qplot, ggplot etc.)
-library(knitr)      # Dynamic Report Creation
-library(datasets)   # R included sample data sets
-data(ToothGrowth)
+```{r "simulation", message = F, warning = F}
+library(grid)       # Plotting graphics (arrow)
+library(ggplot2)    # Plotting (ggplot etc.)
+set.seed(123)
+n <- 40
+lambda <- 0.2
+nSim <- 1000
+exps <- NULL
+means <- NULL
+vars <- NULL
+for (i in 1:nSim){
+    exp <- rexp(n, lambda)
+    exps <- cbind(exps, exp)
+    means <- c(means, mean(exp))
+    vars <- c(vars, sd(exp) ^ 2)
+}
+tMean <- 1 / lambda
+tSD <- 1 / lambda
+tVar <- tSD ^ 2
 ```
 
-To setup the analysis we load the required libraries and the *ToothGrowth* data
-set.  Per the R documentation for the *datasets* package [1], *ToothGrowth* is
-described as follows:
+The data were produced via 1,000 simulations (*nSim*) each generating 40 observations (*n*) of random exponentials using a rate of 0.2 (*lambda*). These values are applied via iteration of a loop to populate values of the expnonentials (*exps*), means (*means*) and variabilities (*vars*). 
 
-> The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).
+Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaion (*tSD*) are $(1/\lambda) = (1/0.2) = 5.0$.   Theoretical variance (*tVar*) is the square of the theoretical standard deviation $(5.0^2 = 25)$.  
 
-```{r "exploratoryAnalysis"}
-str(ToothGrowth)
-summary(ToothGrowth)
-table(ToothGrowth$supp)
-table(ToothGrowth$dose)
-table(ToothGrowth %>% select(supp, dose))
+### Sample Mean Vs. Theoretical Mean
 
-## Transformation/Renaming for clarity
-
-names(ToothGrowth) = c("Length", "Suppliment", "Dose")
-ToothGrowth$Dose = factor(ToothGrowth$Dose)
-ToothGrowth$Suppliment <- factor(
-    ToothGrowth$Suppliment
-    ,labels = c("Orange Juice", "Ascorbic Acid")
-)
-
-
-##   summarize(n=n(),mn=mean(length),sd=sd(length)) %.%
-##  mutate(se=sd/sqrt(n),LCI=mn+qnorm(0.025)*se,UCI=mn+qnorm(0.975)*se)
-
-tgBySuppDose <- ToothGrowth %>%
-    group_by(Suppliment, Dose) %>%
-    summarize(Length = mean(Length), N = n(), SD = sd(Length)) %>%
-    mutate(SE = SD/sqrt(N), CI = Length + qnorm(0.025) * SE) %>%
-    arrange(Suppliment, Dose, desc(Length))
-```
-
-The exploratory analysis of the *ToothGrowth* data frame demonstrates that the
-data consist of 30 observations each of *supp* OJ (Orange Juice) and VC 
-(Ascorbic Acid); the 30 observations of each *supp* consist of 10 observations
-each of the three *dose* levels (0.5, 1 and 2). We then create a data frame
-grouped by Suppliment and Dose summarized by the means.
-
-### Data Summary
-```{r "summary"}
-kable(tgBySuppDose
-      ,format = "markdown"
-      ,caption = "ToothGrowth by Suppliment and Dose"
-)
-```
-
-Based on the summarized data we find that in general increasing the dosage of
-Vitamin C leads to an increase in the mean of Tooth Length via both delivery
-methods (orange juice and ascorbic acid).  While the highest supplied dosage
-(2.0 mg) of each produce similar means (26.06 and 26.14, respectively) further
-analysis for variability and confidence intervals is required.
-
-### Confidence Intervals and Hypothesis Test
-
-```{r "test"}
+```{r "sampleVtheoryMean", echo = F, fig.height = 3}
 plot1 <- ggplot(
-    ToothGrowth
-    ,aes(
-        x = Dose
-        ,y = Length
-        ,fill = Dose
-    )
-) + geom_boxplot() +
-    facet_grid(.~Suppliment) +
-    labs(
-        title = "Analysis of ToothGrowth Data by Suppliment and Dose"
-        ,x = "Dose (mg)"
-        ,y = "Tooth Length"
-    )
-print(plot1)
-
-plot2 <- ggplot(
-    ToothGrowth
-    ,aes(
-        x = Dose
-        ,y = Length
-        ,color = Suppliment
-        ,group = Suppliment
-    )
-) + geom_errorbar(
+    as.data.frame(means)
+    ,aes(x = means)
+) + geom_histogram(
+    alpha = .20
+    ,binwidth = (range(means)[2] - range(means)[1]) / 20
+    ,color = "black"
+    ,aes(y = ..density..)    
+) + geom_vline( # Sample distribution mean line
+    xintercept = mean(means)
+) + geom_segment( # Sample distribution mean arrow
     aes(
-        ymin = Length + se
-        ,ymax = Length + se
+        x = mean(means) + 1
+        ,xend = mean(means)
+        ,y = max(density(means)$y)
+        ,yend = max(density(means)$y) 
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+) + geom_text( # Sample distribution mean label
+    aes(
+        x = mean(means) + 1
+        ,y = max(density(means)$y)
+        ,label = paste(
+            "Sample distribution\nwith mean of"
+            ,sprintf("%.5f", mean(means))
+        )
     )
     ,color = "black"
-    ,width=.1
-    #,position = pd
+    ,size = 3
+    ,hjust = 0    
+) + stat_function(
+    fun = dnorm
+    ,arg = list(mean = tSD)
+    ,color = "red"
+) + geom_vline( # Theoretical distribution variability line
+    xintercept = tSD
+    ,color = "red"
+) + geom_segment( # Theoretical distribution variability arrow
+    aes(
+        x = tSD + 1
+        ,xend = tSD
+        ,y = max(density(means)$y) * .75
+        ,yend = max(density(means)$y) * .75 
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+    ,color = "red"
+) + geom_text( # Theoretical distribution mean label
+    aes(
+        x = tSD + 1
+        ,y = max(density(means)$y) * .75
+        ,label = paste(
+            "Theoretical distribution\nwith mean of"
+            ,sprintf("%.5f",tMean)
+        )
+    )
+    ,color = "red"
+    ,size = 3
+    ,hjust = 0    
+) + labs(
+    title = "Histogram of Exponential Sample\nvs. Theoretical Means"
+    ,x = "Sample Means"
+    ,y = "Density"
 )
+print(plot1)
+```
 
+The base plot in this figure is comprised of a histogram of the sample means with overlayed data including the actual sample mean as well as the theoretical distribution and mean.  This figure demonstrates that the sample mean (5.01191) is already  closely approximated by the theoretical mean (5.0) as described above with a sample size of 1,000 simulations.   
+
+### Sample Vaiance vs. Theoretical Variance
+
+```{r "sampleVtheoryVary", echo = F, fig.height = 3}
+plot2 <- ggplot(
+    as.data.frame(vars)
+    ,aes(x = vars)
+) + geom_histogram(
+    alpha = .20
+    ,binwidth = (range(vars)[2] - range(vars)[1]) / 20
+    ,color = "black"
+    ,aes(y = ..density..)    
+) + geom_vline( # Sample distribution mean line
+    xintercept = mean(vars)
+) + geom_segment( # Sample distribution mean arrow
+    aes(
+        x = mean(vars) + 10
+        ,xend = mean(vars)
+        ,y = max(density(vars)$y) * .85
+        ,yend = max(density(vars)$y) 
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+) + geom_text( # Sample distribution variability label
+    aes(
+        x = mean(vars) + 10
+        ,y = max(density(vars)$y) * .85
+        ,label = paste(
+            "Sample distribution\nwith variability mean of"
+            ,sprintf("%.5f", mean(vars))
+        )
+    )
+    ,color = "black"
+    ,size = 3
+    ,hjust = 0    
+) + geom_vline( # Theoretical distribution variability line
+    xintercept = tVar
+    ,color = "red"
+) + geom_segment( # Theoretical distribution variability arrow
+    aes(
+        x = tVar + 10
+        ,xend = tVar
+        ,y = max(density(vars)$y) * .55
+        ,yend = max(density(vars)$y) * .7
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+    ,color = "red"
+) + geom_text( # Theoretical distribution variability label
+    aes(
+        x = tVar + 10
+        ,y = max(density(vars)$y) * .55
+        ,label = paste(
+            "Theoretical distribution\nwith variability mean of"
+            ,sprintf("%.5f",tVar)
+        )
+    )
+    ,color = "red"
+    ,size = 3
+    ,hjust = 0    
+) + labs(
+    title = "Histogram of Exponential Sample\nvs. Theoretical Variability"
+    ,x = "Sample Variability"
+    ,y = "Density"
+)
 print(plot2)
 ```
 
-Outliers OJ 2 and Ascorbic Acid 1
+The base plot in this figure is comprised of a histogram of the variance of the sample with overlayed data including the actual sample variance mean and the theoretical variance mean.  This figure demonstrates that the sample variance (24.84317) is already  reasonably approximated by the theoretical variance (25.0) as described above with a sample size of 1,000 simulations.   
 
-### Conclusions
+### Distribution
 
-### Reference
+```{r "distribution", echo = F, fig.height = 3}
+plot3 <- qplot(
+    means
+    ,geom = "density"
+    ,main = "Density of Means for Exponential Variables vs. Density of Random Normals"
+    ,xlab = "Sample Mean"
+    ,ylab = "Density"
+) + geom_vline( # Sample distribution mean line
+    xintercept = mean(means)
+) + geom_segment( # Sample distribution mean arrow
+    aes(
+        x = mean(means) + 1
+        ,xend = mean(means)
+        ,y = max(density(means)$y) * .85
+        ,yend = max(density(means)$y) 
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+) + geom_text( # Sample distribution mean label
+    aes(
+        x = mean(means) + 1
+        ,y = max(density(means)$y) * .85
+        ,label = paste(
+            "Sample distribution of the means of\n1,000 sets"
+            ,"of 40 random exponentials\nwith mean of"
+            ,sprintf("%.5f",mean(means))
+        )
+    )
+    ,color = "black"
+    ,size = 3
+    ,hjust = 0
+) + geom_density( # Distribution of random normals
+    aes(
+        x = rnorm(1000000, mean = tMean)
+    )
+    , color = "red"
+) + geom_segment( # Distribution of random normals arrow
+    aes(
+        x = tMean + 1
+        ,xend = tMean
+        ,y = .3
+        ,yend = .4 
+    )
+    ,arrow = arrow(length = unit(.1,"in"), ends = "last")
+    ,color = "red"
+) + geom_text( # Theoretical distribution mean label
+    aes(
+        x = tMean + 1
+        ,y = .3
+        ,label = paste(
+            "Distribution of 1 million random normals \n"
+            ,"with CDT theoretical mean of"
+            ,sprintf("%.5f",tMean)
+        )
+    )
+    ,color = "red"
+    ,size = 3
+    ,hjust = 0
+)
+print(plot3)
+```
 
-[1] https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html
+The base plot in this figure is comprised of the density of the means of the random exponential variables as described above.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
+$(1/\lambda) = (1/0.2) = 5.0$.
+This demonstrates that the distribution of a large set of means of exponentials is approximately normal.  As the sample size increases the distribution converges to the distribution of a large set of random normals.
