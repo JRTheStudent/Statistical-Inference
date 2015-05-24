@@ -35,19 +35,19 @@ Per the CLT both the estimated mean (*tMean*) and the estimated standard deviaio
 
 ### Sample Mean Vs. Theoretical Mean
 
-![](Project1_files/figure-html/sampleVtheoryMean-1.png) 
+![](Project1-a_files/figure-html/sampleVtheoryMean-1.png) 
 
 The base plot in this figure is comprised of a histogram of the sample means with overlayed data including the actual sample mean as well as the theoretical distribution and mean.  This figure demonstrates that the sample mean (5.01191) is already  closely approximated by the theoretical mean (5.0) as described above with a sample size of 1,000 simulations.   
 
 ### Sample Vaiance vs. Theoretical Variance
 
-![](Project1_files/figure-html/sampleVtheoryVary-1.png) 
+![](Project1-a_files/figure-html/sampleVtheoryVary-1.png) 
 
 The base plot in this figure is comprised of a histogram of the variance of the sample with overlayed data including the actual sample variance mean and the theoretical variance mean.  This figure demonstrates that the sample variance (24.84317) is already  reasonably approximated by the theoretical variance (25.0) as described above with a sample size of 1,000 simulations.   
 
 ### Distribution
 
-![](Project1_files/figure-html/distribution-1.png) 
+![](Project1-a_files/figure-html/distribution-1.png) 
 
 The base plot in this figure is comprised of the density of the means of the random exponential variables as described above.  The overlayed plot (in red) is the density of 1 million random normals utilizing the theoretical mean as estimated by the CDT:
 $(1/\lambda) = (1/0.2) = 5.0$.
