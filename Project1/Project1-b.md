@@ -7,7 +7,6 @@ This project explores the *ToothGrowth* data from the R *datasets* library by
 performing some preliminary analysis on the data and drawing some initial
 conclusions.
 
-
 ### Exploratory Data Analysis
 
 
@@ -16,7 +15,7 @@ library(dplyr)      # Data manipulation (filter, mutate, group_by, etc.)
 library(ggplot2)    # Plotting (qplot, ggplot etc.)
 library(knitr)      # Dynamic Report Creation
 library(datasets)   # R included sample data sets
-data(ToothGrowth)
+data(ToothGrowth)   # Load ToothGrowth data set
 ```
 
 To setup the analysis we load the required libraries and the *ToothGrowth* data
