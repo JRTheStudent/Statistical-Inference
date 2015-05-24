@@ -1,0 +1,126 @@
+---
+output:
+  pdf_document: default
+  html_document:
+    keep_md: yes
+---
+
+## Title Analysis of the ToothGrowth Data from R Datasets Package
+
+### Overview
+
+This project explores the *ToothGrowth* data from the R *datasets* library by
+performing some preliminary analysis on the data and drawing some initial
+conclusions.
+
+
+### Exploratory Data Analysis
+
+```{r "setup", message = F, warning = F}
+library(dplyr)      # Data manipulation (filter, mutate, group_by, etc.)
+library(ggplot2)    # Plotting (qplot, ggplot etc.)
+library(knitr)      # Dynamic Report Creation
+library(datasets)   # R included sample data sets
+data(ToothGrowth)
+```
+
+To setup the analysis we load the required libraries and the *ToothGrowth* data
+set.  Per the R documentation for the *datasets* package [1], *ToothGrowth* is
+described as follows:
+
+> The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).
+
+```{r "exploratoryAnalysis"}
+str(ToothGrowth)
+summary(ToothGrowth)
+table(ToothGrowth$supp)
+table(ToothGrowth$dose)
+table(ToothGrowth %>% select(supp, dose))
+
+## Transformation/Renaming for clarity
+
+names(ToothGrowth) = c("Length", "Suppliment", "Dose")
+ToothGrowth$Dose = factor(ToothGrowth$Dose)
+ToothGrowth$Suppliment <- factor(
+    ToothGrowth$Suppliment
+    ,labels = c("Orange Juice", "Ascorbic Acid")
+)
+
+
+##   summarize(n=n(),mn=mean(length),sd=sd(length)) %.%
+##  mutate(se=sd/sqrt(n),LCI=mn+qnorm(0.025)*se,UCI=mn+qnorm(0.975)*se)
+
+tgBySuppDose <- ToothGrowth %>%
+    group_by(Suppliment, Dose) %>%
+    summarize(Length = mean(Length), N = n(), SD = sd(Length)) %>%
+    mutate(SE = SD/sqrt(N), CI = Length + qnorm(0.025) * SE) %>%
+    arrange(Suppliment, Dose, desc(Length))
+```
+
+The exploratory analysis of the *ToothGrowth* data frame demonstrates that the
+data consist of 30 observations each of *supp* OJ (Orange Juice) and VC 
+(Ascorbic Acid); the 30 observations of each *supp* consist of 10 observations
+each of the three *dose* levels (0.5, 1 and 2). We then create a data frame
+grouped by Suppliment and Dose summarized by the means.
+
+### Data Summary
+```{r "summary"}
+kable(tgBySuppDose
+      ,format = "markdown"
+      ,caption = "ToothGrowth by Suppliment and Dose"
+)
+```
+
+Based on the summarized data we find that in general increasing the dosage of
+Vitamin C leads to an increase in the mean of Tooth Length via both delivery
+methods (orange juice and ascorbic acid).  While the highest supplied dosage
+(2.0 mg) of each produce similar means (26.06 and 26.14, respectively) further
+analysis for variability and confidence intervals is required.
+
+### Confidence Intervals and Hypothesis Test
+
+```{r "test"}
+plot1 <- ggplot(
+    ToothGrowth
+    ,aes(
+        x = Dose
+        ,y = Length
+        ,fill = Dose
+    )
+) + geom_boxplot() +
+    facet_grid(.~Suppliment) +
+    labs(
+        title = "Analysis of ToothGrowth Data by Suppliment and Dose"
+        ,x = "Dose (mg)"
+        ,y = "Tooth Length"
+    )
+print(plot1)
+
+plot2 <- ggplot(
+    ToothGrowth
+    ,aes(
+        x = Dose
+        ,y = Length
+        ,color = Suppliment
+        ,group = Suppliment
+    )
+) + geom_errorbar(
+    aes(
+        ymin = Length + se
+        ,ymax = Length + se
+    )
+    ,color = "black"
+    ,width=.1
+    #,position = pd
+)
+
+print(plot2)
+```
+
+Outliers OJ 2 and Ascorbic Acid 1
+
+### Conclusions
+
+### Reference
+
+[1] https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html
