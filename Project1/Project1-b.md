@@ -4,8 +4,8 @@
 ### Overview
 
 This project explores the *ToothGrowth* data from the R *datasets* library by
-performing some preliminary analysis on the data and drawing some initial
-conclusions.
+performing preliminary analysis on the data and drawing some initial
+conclusions on the efficacy of the two delivery methods.
 
 ### Exploratory Data Analysis
 
