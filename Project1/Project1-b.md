@@ -136,12 +136,15 @@ respectively).
 
 ### Conclusions
 
-The analysis suggests that increasing dosage of Vitamin C to 2.0 mg yields
-increases in mean tooth length for both delivery methods.  While the overall
-growth in the mean is higher for ascorbic acid than for orange juice, means at
-2.0 mg dosage are similar with a tighter confidence interval for delivery via
-orange juice and yield higher means at 0.5 and 1.0 mg dosages, suggesting that
-orange juice is a more effective delivery method.
+The conclusions are predicated on the assumptions that the data were normalized
+(e.g. tooth length was standardized across the sets) and that the variables are
+independent and identically distributed.  With these assumptions the analysis
+suggests that increasing dosage of Vitamin C to 2.0 mg yields increases in mean
+tooth length for both delivery methods.  While the overall growth in the mean is
+higher for ascorbic acid than for orange juice, means at 2.0 mg dosage are
+similar with a tighter confidence interval for delivery via orange juice and
+yield higher means at 0.5 and 1.0 mg dosages, suggesting that orange juice is a
+more effective delivery method.
 
 ### Reference
 
